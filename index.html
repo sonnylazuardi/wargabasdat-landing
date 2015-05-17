@@ -22,6 +22,14 @@
     <script type="text/javascript" src="http://sonnylazuardi.github.io/wargabasdat-landing/js/modernizr.custom.32033.js"></script>
     
     <link rel="stylesheet" href="http://sonnylazuardi.github.io/wargabasdat-landing/css/eco.css">
+    <style type="text/css">
+        input {
+            display: block;
+            visibility: hidden;
+            width: 0;
+            height: 0;
+        }
+    </style>
 
     <!--[if lt IE 9]>
       <script src="http://sonnylazuardi.github.io/wargabasdat-landing/https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -324,12 +332,18 @@
                                 <span>Pembagian</span><br>
                                 <b>Topik</b>
                             </a>
-                            
-                                <a href="http://bit.ly/spektugas1" class="btn btn-primary inverse scrollpoint sp-effect2">
-                                    <i class="fa fa-globe fa-3x pull-left"></i>
-                                    <span>Spek</span><br>
-                                    <b>Tugas</b>
-                                </a>
+
+                            <a href="http://bit.ly/spektugas1" class="btn btn-primary inverse scrollpoint sp-effect2">
+                                <i class="fa fa-globe fa-3x pull-left"></i>
+                                <span>Spek</span><br>
+                                <b>Tugas</b>
+                            </a>
+                            <a id = "upload" class="btn btn-primary inverse scrollpoint sp-effect2">
+                                <i class="fa fa-upload fa-3x pull-left"></i>
+                                <span>Upload</span><br>
+                                <b>Tugas</b>
+                            </a>
+                            <input type="file" id="uploadFile" name="uploadFile" />
                         </div>
 
                     </div>
@@ -405,6 +419,38 @@
     <script>
         $(document).ready(function() {
             appMaster.preLoader();
+            var files;
+            var client = new XMLHttpRequest();
+            $('#upload').click(function(){
+                $('input').click();
+            });
+            $('input[type=file]').on('change', prepareUpload);
+            $('input[type=file]').on('click', function() {
+                this.value = '';
+            });
+            function prepareUpload(event) {
+                console.log("ASDF")
+                console.log(this.files[0])
+                if (this.files[0]) {
+                    console.log(this.files[0]);
+                    event.stopPropagation(); // Stop stuff happening
+                    event.preventDefault(); // Totally stop stuff happening
+                    var res = confirm("mau upload file " + this.files[0].name);
+                    if (res) {
+                        var data = new FormData();
+                        data.append("fileToUpload", this.files[0]);
+                        client.open("post", "php/upload.php", true);
+                        client.send(data);  /* Send to server */ 
+                        client.onreadystatechange = function() {
+                            if (client.readyState == 4 && client.status == 200)  {
+                                // alert(client.statusText);
+                                alert(client.responseText);
+                            }
+                        }
+                    }
+                }
+
+            }
         });
     </script>
 </body>
